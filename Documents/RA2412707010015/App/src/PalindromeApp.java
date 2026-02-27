@@ -8,19 +8,20 @@ public class PalindromeApp {
         Scanner sc = new Scanner(System.in);
 
         System.out.print("Input text: ");
-        String word = sc.nextLine();
+        String original = sc.nextLine();
 
         String reversed = "";
 
-        for (int i = word.length() - 1; i >= 0; i--) {
-            reversed = reversed + word.charAt(i);
+        // Reverse using for loop
+        for (int i = original.length() - 1; i >= 0; i--) {
+            reversed = reversed + original.charAt(i);
         }
 
-        if (word.equals(reversed)) {
-            System.out.println("Decision: It is  a Palindrome.");
+        // Compare original and reversed
+        if (original.equals(reversed)) {
+            System.out.println("Decision: It is a Palindrome.");
         } else {
             System.out.println("Decision: It is NOT a Palindrome.");
         }
-
     }
 }
