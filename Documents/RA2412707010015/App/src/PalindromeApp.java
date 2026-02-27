@@ -19,9 +19,9 @@ public class PalindromeApp {
 
         // Compare original and reversed
         if (original.equals(reversed)) {
-            System.out.println("Decision: It is a Palindrome.");
+            System.out.println("Decision: It is  a Palindrome.");
         } else {
-            System.out.println("Decision: It is NOT a Palindrome.");
+            System.out.println("Decision: It is  NOT a Palindrome.");
         }
     }
 }
