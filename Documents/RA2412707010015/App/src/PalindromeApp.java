@@ -1,5 +1,6 @@
 import java.util.SortedMap;
 import java.util.Scanner;
+import java.util.Scanner;
 
 public class PalindromeApp {
 
@@ -8,20 +9,30 @@ public class PalindromeApp {
         Scanner sc = new Scanner(System.in);
 
         System.out.print("Input text: ");
-        String original = sc.nextLine();
+        String text = sc.nextLine().trim().toLowerCase();
 
-        String reversed = "";
+        char[] characters = text.toCharArray();
 
-        // Reverse using for loop
-        for (int i = original.length() - 1; i >= 0; i--) {
-            reversed = reversed + original.charAt(i);
+        int start = 0;
+        int end = characters.length - 1;
+
+        boolean isPalindrome = true;
+
+        while (start < end) {
+
+            if (characters[start] != characters[end]) {
+                isPalindrome = false;
+                break;
+            }
+
+            start++;
+            end--;
         }
 
-        // Compare original and reversed
-        if (original.equals(reversed)) {
-            System.out.println("Decision: It is  a Palindrome.");
+        if (isPalindrome) {
+            System.out.println("Decision: It is a Palindrome.");
         } else {
-            System.out.println("Decision: It is  NOT a Palindrome.");
+            System.out.println("Decision: It is NOT a Palindrome.");
         }
     }
 }
