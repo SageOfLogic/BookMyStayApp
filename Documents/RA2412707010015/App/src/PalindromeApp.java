@@ -1,6 +1,6 @@
 import java.util.SortedMap;
 import java.util.Scanner;
-import java.util.Scanner;
+import java.util.Stack;
 
 public class PalindromeApp {
 
@@ -11,22 +11,23 @@ public class PalindromeApp {
         System.out.print("Input text: ");
         String text = sc.nextLine().trim().toLowerCase();
 
-        char[] characters = text.toCharArray();
+        Stack<Character> stack = new Stack<>();
 
-        int start = 0;
-        int end = characters.length - 1;
+        // Push characters into stack
+        for (int i = 0; i < text.length(); i++) {
+            stack.push(text.charAt(i));
+        }
 
         boolean isPalindrome = true;
 
-        while (start < end) {
+        // Pop and compare
+        for (int i = 0; i < text.length(); i++) {
+            char popped = stack.pop();
 
-            if (characters[start] != characters[end]) {
+            if (text.charAt(i) != popped) {
                 isPalindrome = false;
                 break;
             }
-
-            start++;
-            end--;
         }
 
         if (isPalindrome) {
