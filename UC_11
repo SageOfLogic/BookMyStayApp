@@ -1,0 +1,116 @@
+import java.util.*;
+
+public class BookMyStayApp {
+
+    public static void main(String[] args) throws InterruptedException {
+
+        Inventory inventory = new Inventory();
+        inventory.setAvailability("DELUXE", 2);
+
+        BookingRequestQueue queue = new BookingRequestQueue();
+        queue.addRequest(new Reservation("Guest1", "DELUXE"));
+        queue.addRequest(new Reservation("Guest2", "DELUXE"));
+        queue.addRequest(new Reservation("Guest3", "DELUXE"));
+
+        BookingService bookingService = new BookingService(inventory);
+
+        Runnable task = () -> {
+            while (true) {
+                Reservation r = queue.getNext();
+                if (r == null) break;
+                bookingService.allocate(r);
+            }
+        };
+
+        Thread t1 = new Thread(task);
+        Thread t2 = new Thread(task);
+
+        t1.start();
+        t2.start();
+
+        t1.join();
+        t2.join();
+    }
+}
+
+class Reservation {
+    private String guestName;
+    private String roomType;
+
+    public Reservation(String guestName, String roomType) {
+        this.guestName = guestName;
+        this.roomType = roomType;
+    }
+
+    public String getGuestName() {
+        return guestName;
+    }
+
+    public String getRoomType() {
+        return roomType;
+    }
+}
+
+class BookingRequestQueue {
+    private Queue<Reservation> queue = new LinkedList<>();
+
+    public synchronized void addRequest(Reservation r) {
+        if (r != null) queue.offer(r);
+    }
+
+    public synchronized Reservation getNext() {
+        return queue.poll();
+    }
+}
+
+class Inventory {
+    private Map<String, Integer> data = new HashMap<>();
+
+    public synchronized void setAvailability(String type, int count) {
+        data.put(type, count);
+    }
+
+    public synchronized int getAvailability(String type) {
+        return data.getOrDefault(type, 0);
+    }
+
+    public synchronized boolean allocate(String type) {
+        int current = getAvailability(type);
+        if (current <= 0) return false;
+        data.put(type, current - 1);
+        return true;
+    }
+}
+
+class BookingService {
+
+    private Inventory inventory;
+    private Set<String> usedIds = Collections.synchronizedSet(new HashSet<>());
+
+    public BookingService(Inventory inventory) {
+        this.inventory = inventory;
+    }
+
+    public void allocate(Reservation r) {
+        synchronized (inventory) {
+            if (!inventory.allocate(r.getRoomType())) {
+                System.out.println("Failed: " + r.getGuestName());
+                return;
+            }
+
+            String id = generate(r.getRoomType());
+            usedIds.add(id);
+
+            System.out.println(Thread.currentThread().getName() +
+                    " Confirmed: " + r.getGuestName() + " -> " + id);
+        }
+    }
+
+    private String generate(String type) {
+        String id;
+        do {
+            id = type + "-" + UUID.randomUUID().toString().substring(0, 5);
+        } while (usedIds.contains(id));
+        return id;
+    }
+}
